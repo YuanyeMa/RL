@@ -1,0 +1,24 @@
+import numpy as np
+from plot import Vis
+
+class OrnsteinUhlenbeckActionNoise:
+    def __init__(self, action_dim, mu = 0, theta = 0.15, sigma = 0.2):
+        self.action_dim = action_dim 
+        self.mu = mu 
+        self.theta = theta
+        self.sigma = sigma
+        self.X = np.ones(self.action_dim) *  self.mu
+    
+    def sample(self):
+        dx = self.theta * (self.mu - self.X)
+        dx = dx + self.sigma * np.random.randn(len(self.X))
+        self.X = self.X + dx
+        return self.X
+
+
+if __name__ == '__main__':
+    vis = Vis(env='test_for_noise')
+    nosie = OrnsteinUhlenbeckActionNoise(action_dim=1)
+    for i in range(10000):
+        x = nosie.sample()
+        vis.update(x=i, y=x, line_name="noise")
