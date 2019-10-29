@@ -111,6 +111,7 @@ def rpc_server(server_port, robot_port):
         kvserv.close()
 
 def main(argv):
+    print("\033[92m From RPC_Server : server port = {}, robot port = {}\033[00m".format(argv[0], argv[1]))
     server_port = int(argv[0])
     robot_port = int(argv[1])
     rpc_server(server_port, robot_port)

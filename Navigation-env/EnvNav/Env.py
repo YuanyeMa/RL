@@ -8,16 +8,14 @@ from gym.utils import seeding
 import numpy as np
 from collections import namedtuple
 
-from Robot import Robot
-from Server import Server
+from EnvNav.Server import Server
+from EnvNav.Robot import Robot
+
 
 RAD2DEG = 57.29577951308232     # 弧度与角度换算关系1弧度=57.29..角度
 
 class RobotWorld(gym.Env):
-    metadata = {
-        'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': 30
-        }
+    metadata = { 'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 30 }
 
     server_port = 16000
     robot_port = 8000
@@ -37,16 +35,16 @@ class RobotWorld(gym.Env):
         try:
             self.server = Server(server_port=RobotWorld._get_server_port()+self.index,
                              robot_port=RobotWorld._get_robot_port()+self.index)
-            self.server.start_server()
+            self.server.start_server() 
             # 2. 初始化robot (client)
             self.server_address = 'http://localhost:'+str(RobotWorld._get_server_port()+self.index)
             self.robot = Robot(self.server_address, self.index)
         except Exception as e:
             print("\033[31m ERROR : {} \033[00m".format(e))
             raise Exception("Create Robot object failed") 
-        
+    
         print("\033[92m robot world {} create succeccful \033[00m".format(self.index))
-        
+
         self.r_arrive = 25  # 到达目标点的奖励
         self.r_wg = 10 # 距离缩短时的奖励系数
         self.r_collision = -15 # 碰撞时的惩罚
@@ -89,9 +87,6 @@ class RobotWorld(gym.Env):
         self.seed()
         self.t = 0
         
-
-
-
     def step(self, action):
         self.t += 1
         # 1. 执行动作
@@ -186,3 +181,6 @@ class RobotWorld(gym.Env):
             self.robot.set_robot_pose(0,0,0)
         self.server.stop_server()
         print("Agent {} close".format(self.index))
+
+    def render(self, mode="human"):
+        return None
